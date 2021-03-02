@@ -1,21 +1,12 @@
 
 var myData = [
-    {"dealId" : 0, "client_name" : "Microsoft", "project_name" : "Apollo Project", "project_manager" : "Mary", "project_cost" : 1000},
-    {"dealId" : 1, "client_name" : "Intel", "project_name" : "Hermes Project", "project_manager" : "Bob", "project_cost" : 10000},
-    {"dealId" : 2, "client_name" : "Apple", "project_name" : "Zeus Project", "project_manager" : "Jane", "project_cost" : 100000}
+    {"dealId" : 0, "client_name" : "Microsoft", "project_name" : "Apollo Project", "project_manager" : "Mary", "project_estimate" : 1000, "finance_actual": 100, "budget": "UNDER"},
+    {"dealId" : 1, "client_name" : "Intel", "project_name" : "Hermes Project", "project_manager" : "Bob", "project_estimate" : 10000, "finance_actual": 100, "budget": "UNDER"},
+    {"dealId" : 2, "client_name" : "Apple", "project_name" : "Zeus Project", "project_manager" : "Jane", "project_estimate" : 100000, "finance_actual": 100, "budget": "UNDER"}
 ]
 
 
 var currentDealId = myData.length;
-
-
-
-// localstorage allows us to persist key value pairs in a way that would survive page refreshes, navigation, and user closing/reopening browser.
-// localstorage has limits to the size of each object stored.   
-
-localStorage.setItem("myData", "test")
-
-var myDataTest = localStorage.getItem("myData")
 
 
 
@@ -55,10 +46,12 @@ function CreateTableFromJSON() {
             var tabCell = tr.insertCell(-1);
             tabCell.innerHTML = myData[i][col[j]];
         }
-        // Insert Extra Cell for the Delete Icon
-        //TODO: Complete this
-        //var tabCell = tr.insertCell(-1);
-        //tabCell.innerHTML = '<button onclick="DeleteRow(' + myData[i].dealId + ')"> <img src="trashcan.png"> </button>'
+
+        var tabCell = tr.insertCell(-1);
+        tabCell.innerHTML = '<button onclick="FinanceRow(' + myData[i].dealId + ')">Update Finance</button>'
+
+        var tabCell = tr.insertCell(-1);
+        tabCell.innerHTML = '<button onclick="DeleteRow(' + myData[i].dealId + ')">Delete Row</button>'
 
     }
 
@@ -66,6 +59,8 @@ function CreateTableFromJSON() {
     var divContainer = document.getElementById("showData");
     divContainer.innerHTML = "";
     divContainer.appendChild(table);
+
+    saveTableToStorage();
 }
 
 function AddNewDeal() {
@@ -83,12 +78,24 @@ function AddNewDeal() {
 
     InsertRow(currentDealId, clientName, projectName, projectManager, projectCost);
     
+    
+
+}
+
+function FinanceRow(dealId){
+
+    localStorage.setItem("finance", dealId);
+
+    window.location="finance.html"
+
 
 }
 
 function InsertRow(dealId, clientName, projectName, projectManager, projectCost) {
-    myData.push({"dealId": dealId, "client_name" : clientName, "project_name" : projectName, "project_manager" : projectManager, "project_cost" : projectCost})
+    myData.push({"dealId": dealId, "client_name" : clientName, "project_name" : projectName, "project_manager" : projectManager, "project_estimate" : projectCost, "finance_actual": 100, "budget": "UNDER"})
     currentDealId++;
+
+
     CreateTableFromJSON();
 
 }
@@ -101,8 +108,41 @@ function DeleteRow(dealId) {
     
             myData.splice(i, 1); 
         }
+
+        localStorage.removeItem(dealId);
     
     }
     CreateTableFromJSON();
+}
+
+// Save to localStorage
+function saveTableToStorage() {
+    var dealString
+    myData.forEach(element => {
+
+        if (localStorage.getItem(element.dealId) !== null) {
+            console.log(`Email address exists`);
+        } else {
+            dealString = JSON.stringify(element);
+            localStorage.setItem(element.dealId.toString(), dealString);
+        }
+
+        budgetEval();
+        
+    });
+    
+}
+
+function budgetEval(){
+    myData.forEach(element => {
+
+        if (element.project_estimate < element.finance_actual ) {
+            element.budget = "OVER";
+        }
+    });
+}
+
+function EditEstimate(){
+
 }
 

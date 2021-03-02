@@ -16,6 +16,7 @@
         th {
             font-weight:bold;
         }
+        
     </style>
     <script src="create_table.js"></script>
 
@@ -24,10 +25,10 @@
     <p id="showData"></p>
     <H3>Add New Deal</H3>
     <p id="newData"> 
-        <label>Client Name</label><input type="text" id="clientNameInput" /><br />
-        <label>Project Name</label><input type="text" id="projectNameInput" /><br />
-        <label>Project Manager</label><input type="text" id="projectManagerInput" /><br />
-        <label>Project Cost</label><input type="number" id="projectCostInput" /><br />
+        <label for="clientNameInput">Client Name</label><input type="text" id="clientNameInput" /><br />
+        <label for="projectNameInput">Project Name</label><input type="text" id="projectNameInput" /><br />
+        <label for="projectManagerInput">Project Manager</label><input type="text" id="projectManagerInput" /><br />
+        <label for="projectCostInput">Project Cost</label><input type="number" id="projectCostInput" /><br />
     </p>
     <input type="button" onclick="AddNewDeal()" value="Save" />
     

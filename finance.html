@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deals</title>
+    <style>
+        th, td, p, input {
+            font:14px Verdana;
+        }
+        table, th, td 
+        {
+            border: solid 1px #DDD;
+            border-collapse: collapse;
+            padding: 2px 3px;
+            text-align: center;
+        }
+        th {
+            font-weight:bold;
+        }
+    </style>
+    <script src="update_finance.js"></script>
+
+</head>
+<body onload="CreateTableFromJSON()">
+    
+    <h2 id="projectName"></h2>
+    <p id="showData"></p>
+    <h2 id="expenseTotal"></h2>
+    <H3>Add New Expense</H3>
+    <p id="newData"> 
+        <label for="expenseNameInput">Expense Name</label><input type="text" id="expenseNameInput" /><br />
+        <label for="expenseCostInput">Expense Cost</label><input type="text" id="expenseCostInput" /><br />
+    </p>
+    <input type="button" onclick="AddNewDeal()" value="Save" />
+    <br>
+    <br>
+    <input type="button" onclick="ReturnToDeals()" value="Team Manager" />
+    
+</body>
