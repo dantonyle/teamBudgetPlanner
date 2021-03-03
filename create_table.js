@@ -1,10 +1,5 @@
 
-var myData = [
-    {"dealId" : 0, "client_name" : "Microsoft", "project_name" : "Apollo Project", "project_manager" : "Mary", "project_estimate" : 1000, "finance_actual": 100, "budget": "UNDER"},
-    {"dealId" : 1, "client_name" : "Intel", "project_name" : "Hermes Project", "project_manager" : "Bob", "project_estimate" : 10000, "finance_actual": 100, "budget": "UNDER"},
-    {"dealId" : 2, "client_name" : "Apple", "project_name" : "Zeus Project", "project_manager" : "Jane", "project_estimate" : 100000, "finance_actual": 100, "budget": "UNDER"}
-]
-
+var myData = [];
 
 var currentDealId = myData.length;
 
@@ -12,7 +7,7 @@ var currentDealId = myData.length;
 
 function CreateTableFromJSON() {    
     
-
+    getTableFromLocalStorage();
     // EXTRACT VALUE FOR HTML HEADER. 
     // ('Deal ID', 'Deal Name', 'Category' and 'Price')
     var col = [];
@@ -60,7 +55,7 @@ function CreateTableFromJSON() {
     divContainer.innerHTML = "";
     divContainer.appendChild(table);
 
-    saveTableToStorage();
+    pushTableToStorage();
 }
 
 function AddNewDeal() {
@@ -94,8 +89,8 @@ function FinanceRow(dealId){
 function InsertRow(dealId, clientName, projectName, projectManager, projectCost) {
     myData.push({"dealId": dealId, "client_name" : clientName, "project_name" : projectName, "project_manager" : projectManager, "project_estimate" : projectCost, "finance_actual": 100, "budget": "UNDER"})
     currentDealId++;
-
-
+    
+    pushTableToStorage();
     CreateTableFromJSON();
 
 }
@@ -109,27 +104,49 @@ function DeleteRow(dealId) {
             myData.splice(i, 1); 
         }
 
-        localStorage.removeItem(dealId);
+        localStorage.removeItem("deal" + dealId);
     
     }
     CreateTableFromJSON();
 }
 
+
+function getTableFromLocalStorage(){
+
+    myData = [];
+
+    for(i = 0; i < 10; i++) {
+        var dealString = localStorage.getItem("deal" + i);
+        console.log(dealString);
+        if (dealString !== null){
+            var deal = JSON.parse(dealString);
+            myData.push(deal);
+        }
+        budgetEval();
+    }
+
+    currentDealId = myData.length;
+
+}
+
 // Save to localStorage
-function saveTableToStorage() {
-    var dealString
+function pushTableToStorage() {
+   
+    budgetEval();
     myData.forEach(element => {
 
-        if (localStorage.getItem(element.dealId) !== null) {
-            console.log(`Email address exists`);
-        } else {
-            dealString = JSON.stringify(element);
-            localStorage.setItem(element.dealId.toString(), dealString);
-        }
+        if (localStorage.getItem("deal" + element.dealId) == null) {
 
-        budgetEval();
+            var dealString = JSON.stringify(element);
+            localStorage.setItem("deal" + element.dealId, dealString);
+        }
+        
+
+        
         
     });
+
+
     
 }
 

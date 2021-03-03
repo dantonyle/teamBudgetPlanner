@@ -1,26 +1,18 @@
 
-var myTaskData = [
-    {"expenseId" : 0, "expense_name" : "Initial Setup" , "expense_cost" : 100},
-    
-]
-
+var myTaskData = [];
 var actualCostTotal = 0;
-
-
-
 var taskIdCount = myTaskData.length;
-
-
 
 function CreateTableFromJSON() {    
     
+    getExpenseFromStorage();
     updateTotal();
 
-    var edit = window.localStorage.getItem("finance");
-    var projectString = window.localStorage.getItem(edit);
-    var project = JSON.parse(projectString);
+    var dealNum = localStorage.getItem("finance");
+    var dealString = localStorage.getItem("deal"+dealNum);
+    var deal = JSON.parse(dealString);
 
-    document.getElementById("projectName").innerHTML = project.project_name;
+    document.getElementById("projectName").innerHTML = deal.project_name;
     document.getElementById("expenseTotal").innerHTML = actualCostTotal.toString();
 
     
@@ -69,7 +61,7 @@ function CreateTableFromJSON() {
     divContainer.innerHTML = "";
     divContainer.appendChild(table);
 
-    
+    addExpenseToStorage();
 
 }
 
@@ -90,10 +82,13 @@ function AddNewDeal() {
 }
 
 function InsertRow(expenseName, expenseCost) {
-    taskIdCount++;
+    
+    console.log(expenseName);
+    console.log(expenseCost);
+
     myTaskData.push({"expenseId": taskIdCount, "expense_name" : expenseName, "expense_cost" : expenseCost})
-
-
+    taskIdCount++;
+    addExpenseToStorage();
     CreateTableFromJSON();
 
 }
@@ -123,17 +118,55 @@ function updateTotal(){
 
 function ReturnToDeals() {
 
-    var edit = window.localStorage.getItem("finance");
-    var projectString = window.localStorage.getItem(edit);
-    var p = JSON.parse(projectString);
+    var dealNum = parseInt(localStorage.getItem("finance"));
+    console.log("dealNum: " + dealNum);
+    var dealString = localStorage.getItem("deal"+dealNum);
+    console.log("object: " + dealString.toString() );
+    var p = JSON.parse(dealString);
 
-    var myData = {"dealId" : p.dealId, "client_name" : p.client_name, "project_name" : p.project_name, "project_manager" : p.project_manager, "project_estimate" : p.project_estimate, "finance_actual": parseInt(actualCostTotal), "budget": "UNDER"}
+    var dealData = {"dealId": p.dealId, "client_name" : p.client_name, "project_name" : p.project_name, "project_manager" : p.project_manager, "project_estimate" : p.project_estimate, "finance_actual": actualCostTotal, "budget": "UNDER"};
 
-    var dealString = JSON.stringify(myData);
+    var deal = JSON.stringify(dealData);
 
-    localStorage.setItem(p.dealId.toString(), dealString);
+    localStorage.setItem("deal"+dealNum, deal);
 
     window.location = "deal_manager.html";
     
+}
+
+function addExpenseToStorage() {
+    var deal = "deal" + localStorage.getItem("finance");
+
+    myTaskData.forEach(element => {
+
+        var taskLocal = localStorage.getItem(deal+"task"+element.taskId);
+        // if row does not exist in local storage -- ADD
+        if ( taskLocal == null) {
+            var expenseString = JSON.stringify(element);
+            localStorage.setItem(deal+"task"+element.expenseId, expenseString);
+        }
+    });
+
+}
+
+function getExpenseFromStorage() {
+    myTaskData= []
+    var deal = "deal" + localStorage.getItem("finance");
+    console.log("deal:" + deal);
+
+    if (localStorage.getItem(deal+"task0") == null){
+        myTaskData.push({"expenseId": taskIdCount, "expense_name" : "Initial Fee", "expense_cost" : 100})
+    } else {
+        for(i = 0; i < 20; i++ ) {
+        
+            var taskString = localStorage.getItem(deal+"task"+i);
+
+            if (taskString !== null) {
+                var task = JSON.parse(taskString);
+                myTaskData.push(task);
+            }
+        }
+    }
+    taskIdCount = myTaskData.length;
 }
 
